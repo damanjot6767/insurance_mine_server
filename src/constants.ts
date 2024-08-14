@@ -2,8 +2,8 @@ export const DB_NAME: string = 'Insurance'
 
 
 export const UserRolesEnum = {
-  ADMIN: "ADMIN",
-  USER: "USER",
+  ACTIVE_CLIENT: "ACTIVE CLIENT",
+  INACTIVE_CLIENT: "INACTIVE CLIENT",
 };
 
 export const AvailableUserRoles: string[] = Object.values(UserRolesEnum);

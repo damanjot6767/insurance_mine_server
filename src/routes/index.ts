@@ -1,11 +1,10 @@
-import coinRouter from './coin-route'
-import coinEntryRouter from './coin-entry-route'
+
+import policyRouter from './policy-route'
 import { addNewRoute, createJsonDoc } from '../utils/swagger-util';
 import { Router } from 'express';
 
 const routes = [
-    ...coinRouter,
-    ...coinEntryRouter
+    ...policyRouter
 ]
 
 //-----------------------swagger setup
