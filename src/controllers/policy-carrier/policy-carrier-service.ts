@@ -1,4 +1,4 @@
-import { createMultiplePolicyCarriers, createSinglePolicyCarrier, deletePolicyCarrierById, getPolicyCarrierById, getPolicyCarriers } from "../../models/policy-carrier-model";
+import { createMultiplePolicyCarriers, createSinglePolicyCarrier, deletePolicyCarrierById, getPolicyCarrierByCompanyName, getPolicyCarrierById, getPolicyCarriers } from "../../models/policy-carrier-model";
 import { ApiError } from "../../utils/api-error";
 import { CreatePolicyCarrierDto, PolicyCarrierDto } from "./dto";
 
@@ -43,6 +43,12 @@ export const getPolicyCarrierByIdService = async (PolicyCarrierId: string): Prom
 
     const res = await getPolicyCarrierById(PolicyCarrierId)
     if(!res) throw new ApiError(400, "not found")
+    return res
+}
+
+export const getPolicyCarrierByCompanyNameService = async (CompanyName: string): Promise<PolicyCarrierDto | undefined> => {
+
+    const res = await getPolicyCarrierByCompanyName(CompanyName)
     return res
 }
 

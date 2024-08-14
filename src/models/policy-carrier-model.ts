@@ -22,6 +22,7 @@ export const CarrierModel = mongoose.model('Carrier', carrierSchema);
 
 export const getPolicyCarriers = (): Promise<PolicyCarrierDto[]> => CarrierModel.find();
 export const getPolicyCarrierById = (CarrierId: string): Promise<PolicyCarrierDto | any> => CarrierModel.findOne({ _id: CarrierId });
+export const getPolicyCarrierByCompanyName = (CompanyName: string): Promise<PolicyCarrierDto | any> => CarrierModel.findOne({ companyName: CompanyName });
 export const deletePolicyCarrierById = (CarrierId: string): any => CarrierModel.findOneAndDelete({ _id: CarrierId });
 
 export const createSinglePolicyCarrier = async (payload: CreatePolicyCarrierDto): Promise<any> => {
@@ -64,7 +65,7 @@ export const createMultiplePolicyCarriers = async (payloads: CreatePolicyCarrier
            // Prepare bulk operations for the current batch
            const bulkOps = batch.map(payload => ({
             updateOne: {
-                filter: { _id: payload._id },
+                filter: { companyName: payload.companyName },
                 update: { $set: payload },
                 upsert: true
             }
@@ -79,6 +80,7 @@ export const createMultiplePolicyCarriers = async (payloads: CreatePolicyCarrier
 
         return payloads.length;
     } catch (error) {
+        console.log("error", error)
         throw new ApiError(500, "Something went wrong while creating policy carriers in batch");
     }
 }

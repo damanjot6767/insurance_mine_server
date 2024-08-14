@@ -7,7 +7,7 @@ export const policySchema = new Schema(
     {
 
         policyNumber: {
-            type: Number,
+            type: String,
             unique: true,
             index: true,
             required: true
@@ -45,6 +45,7 @@ export const PolicyModel = mongoose.model('Policy', policySchema);
 
 export const getPolicys = (): Promise<PolicyDto[]> => PolicyModel.find();
 export const getPolicyById = (PolicyId: string): Promise<PolicyDto | any> => PolicyModel.findOne({ _id: PolicyId });
+export const getPolicyByPolicyNumber = (PolicyNumber: string): Promise<PolicyDto | any> => PolicyModel.findOne({ policyNumber: PolicyNumber });
 export const deletePolicyById = (PolicyId: string): any => PolicyModel.findOneAndDelete({ _id: PolicyId });
 
 export const createSinglePolicy = async (payload: CreatePolicyDto): Promise<any> => {
@@ -86,7 +87,7 @@ export const createMultiplePolices = async (payloads: CreatePolicyDto[]): Promis
            // Prepare bulk operations for the current batch
            const bulkOps = batch.map(payload => ({
             updateOne: {
-                filter: { _id: payload._id },
+                filter: { policyNumber: payload.policyNumber },
                 update: { $set: payload },
                 upsert: true
             }

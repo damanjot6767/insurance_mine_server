@@ -8,7 +8,7 @@ let redisPublishInstance: Redis | null = null;
 // Ensure redisInstance is initialized only once
 if (!redisInstance) {
 
-  redisInstance = new Redis(process.env.REDIS_URL);
+  redisInstance = new Redis(process.env.REDIS_URL || "");
 
   // Event listener for the first connection
   redisInstance.once("connect", () => {
@@ -31,7 +31,7 @@ if (!redisInstance) {
 
 //Ensure redisSubscriber instance in intialized only once 
 if(!redisSubscriberInstance){
-  redisSubscriberInstance = new Redis(process.env.REDIS_URL);
+  redisSubscriberInstance = new Redis(process.env.REDIS_URL || "");
 
   // Event listener for the first connection
   redisSubscriberInstance.once("connect", () => {
@@ -54,7 +54,7 @@ if(!redisSubscriberInstance){
 
 //Ensure redisPublisher instance in intialized only once 
 if(!redisPublishInstance){
-  redisPublishInstance = new Redis(process.env.REDIS_URL);
+  redisPublishInstance = new Redis(process.env.REDIS_URL || "");
 
    // Event listener for the first connection
    redisPublishInstance.once("connect", () => {

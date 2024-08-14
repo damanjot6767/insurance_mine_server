@@ -7,6 +7,8 @@ interface CreatePolicyDto  {
     policyCategoryId: string;
     policyCompanyId: string;
     userId: string;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 export { CreatePolicyDto }

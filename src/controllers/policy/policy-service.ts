@@ -1,4 +1,4 @@
-import { createMultiplePolices, createSinglePolicy, deletePolicyById, getPolicyById, getPolicys, updateSinglePolicy } from "../../models/policy-model";
+import { createMultiplePolices, createSinglePolicy, deletePolicyById, getPolicyById, getPolicyByPolicyNumber, getPolicys, updateSinglePolicy } from "../../models/policy-model";
 import { ApiError } from "../../utils/api-error";
 import { CreatePolicyDto, PolicyDto } from "./dto";
 
@@ -45,9 +45,16 @@ export const getPolicyByIdService = async (PolicyId: string): Promise<PolicyDto>
     return res
 }
 
+export const getPolicyByPolicyNumberService = async (PolicyName: string): Promise<PolicyDto | undefined> => {
+
+    const res = await getPolicyByPolicyNumber(PolicyName)
+    return res
+}
+
 export const deletePolicyByIdService = async (PolicyId: string): Promise<any> => {
 
     const res = await deletePolicyById(PolicyId)
     if(!res) throw new ApiError(400, "not found")
     return res
 }
+

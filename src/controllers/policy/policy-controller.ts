@@ -3,7 +3,22 @@ import path from "path";
 import { asyncHandler } from "../../utils/async-handler"
 import { ApiError } from "../../utils/api-error";
 import { ApiResponse } from "../../utils/api-response";
-
+import { PolicySheetJoiValidation } from "../../common/validation/policy-sheet";
+import { PolicySheetDataDto } from "../../common/dto/policy-dto";
+import { generateMongooseID } from "../../utils/generate-mongo-id";
+import { CreateAgentDto } from "../agent/dto";
+import { createMultipleAgentsService, getAgentByAgentNameService } from "../agent/agent-service";
+import { createMultiplePolicyCarriersService } from "../policy-carrier/policy-carrier-service";
+import { CreatePolicyCarrierDto } from "../policy-carrier/dto";
+import { CreatePolicyLobDto } from "../policy-lob/dto";
+import { createMultiplePolicyLobiesService, getPolicyLobByCategoryNameService } from "../policy-lob/policy-lob-service";
+import { CreateUserDto } from "../user/dto";
+import { CreateUserAccountDto } from "../user-account/dto";
+import { CreatePolicyDto } from "./dto";
+import { createMultipleUsersService, getUserByEmailService } from "../user/user-service";
+import { createMultipleUserAccountsService, getUserAccountByAccountNameService } from "../user-account/user-account-service";
+import { createMultiplePoliciesService, getPolicyByPolicyNumberService } from "./policy-service";
+import { getPolicyCarrierByCompanyName } from "../../models/policy-carrier-model";
 
 export const createPolicyDataThroughtSheet = asyncHandler(async (req, res) => {
     if (!req.file?.path) {
@@ -19,10 +34,11 @@ export const createPolicyDataThroughtSheet = asyncHandler(async (req, res) => {
 
     let responseSent = false;
 
-    worker.on('message', (message) => {
+    worker.on('message', async (message) => {
         if (!responseSent) {
             responseSent = true;
-            return res.status(201).json(new ApiResponse(201, message, 'Data created successfully'));
+            await Main(message.data)
+            return res.status(201).json(new ApiResponse(201, 'success', 'Data created successfully'));
         }
     });
 
@@ -42,3 +58,113 @@ export const createPolicyDataThroughtSheet = asyncHandler(async (req, res) => {
         }
     });
 });
+
+const Main = async (payloads: PolicySheetDataDto[]) => {
+    try {
+        let newAgents: { [key: string]: CreateAgentDto } = {};
+        let newCompanies: { [key: string]: CreatePolicyCarrierDto } = {}
+        let newCategories: { [key: string]: CreatePolicyLobDto } = {}
+        let newUsers: { [key: string]: CreateUserDto } = {}
+        let newUserAccounts: { [key: string]: CreateUserAccountDto } = {}
+        let newPolicies: { [key: string]: CreatePolicyDto } = {}
+
+        const promises = payloads.map(async (item) => {
+            //--------------------------------------------Agent Payload
+            if (!newAgents[item.agent]) {
+                const isAgentExist = await getAgentByAgentNameService(item.agent);
+                newAgents[item.agent] = {
+                    _id: isAgentExist?._id || generateMongooseID(),
+                    agentName: item.agent,
+                    createdAt: isAgentExist ? isAgentExist.createdAt : new Date(),
+                    updatedAt: new Date(),
+                };
+            }
+
+            //--------------------------------------------Company Payload
+            if (!newCompanies[item.company_name]) {
+                const isCompanyExist = await getPolicyCarrierByCompanyName(item.company_name);
+                newCompanies[item.company_name] = {
+                    _id: isCompanyExist?._id || generateMongooseID(),
+                    companyName: item.company_name,
+                    createdAt: isCompanyExist ? isCompanyExist.createdAt : new Date(),
+                    updatedAt: new Date(),
+                };
+            }
+
+            //--------------------------------------------Category Payload
+            if (!newCategories[item.category_name]) {
+                const isCategoryExist = await getPolicyLobByCategoryNameService(item.category_name);
+                newCategories[item.category_name] = {
+                    _id: isCategoryExist?._id || generateMongooseID(),
+                    categoryName: item.category_name,
+                    createdAt: isCategoryExist ? isCategoryExist.createdAt : new Date(),
+                    updatedAt: new Date(),
+                };
+            }
+
+            //--------------------------------------------User Payload
+            if (!newUsers[item.email]) {
+                const isUserExist = await getUserByEmailService(item.email);
+                newUsers[item.email] = {
+                    _id: isUserExist?._id || generateMongooseID(),
+                    email: item.email,
+                    firstName: item.firstname,
+                    lastName: item.lastname,
+                    dob: item.dob,
+                    address: item.address || "",
+                    phoneNumber: item.phone,
+                    state: item.state || "",
+                    zipCode: item.zip || "",
+                    gender: item.gender,
+                    userType: item.userType,
+                    createdAt: isUserExist ? isUserExist.createdAt : new Date(),
+                    updatedAt: new Date(),
+                };
+            }
+
+            //--------------------------------------------User Account Payload
+            if (!newUserAccounts[item.account_name]) {
+                const isUserAccountExist = await getUserAccountByAccountNameService(item.account_name);
+                newUserAccounts[item.account_name] = {
+                    _id: isUserAccountExist?._id || generateMongooseID(),
+                    accountName: item.account_name,
+                    userId: newUsers[item.email]._id,
+                    createdAt: isUserAccountExist ? isUserAccountExist.createdAt : new Date(),
+                    updatedAt: new Date(),
+                };
+            }
+
+            //--------------------------------------------Policy Payload
+            if (!newPolicies[item.policy_number]) {
+                const isPolicyExist = await getPolicyByPolicyNumberService(item.policy_number);
+                newPolicies[item.policy_number] = {
+                    _id: isPolicyExist?._id || generateMongooseID(),
+                    policyNumber: item.policy_number,
+                    policyStartDate: item.policy_start_date,
+                    policyEndDate: item.policy_end_date,
+                    policyCompanyId: newCompanies[item.company_name]._id,
+                    policyCategoryId: newCategories[item.category_name]._id,
+                    userId: newUsers[item.email]._id,
+                    createdAt: isPolicyExist ? isPolicyExist.createdAt : new Date(),
+                    updatedAt: new Date(),
+                };
+            }
+        });
+
+        await Promise.all(promises);
+
+        //--------------------------------------------DB Services
+        await Promise.all([
+            createMultipleAgentsService(Object.values(newAgents)),
+            createMultiplePolicyCarriersService(Object.values(newCompanies)),
+            createMultiplePolicyLobiesService(Object.values(newCategories)),
+            createMultipleUsersService(Object.values(newUsers)),
+            createMultipleUserAccountsService(Object.values(newUserAccounts)),
+            createMultiplePoliciesService(Object.values(newPolicies)),
+        ]);
+
+    } catch (error) {
+        console.log("error->>>>>>>>>>>>>>>>>>97", error)
+        throw error
+    }
+}

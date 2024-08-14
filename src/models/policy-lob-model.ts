@@ -22,6 +22,7 @@ export const LobModel = mongoose.model('LOB', lobSchema);
 
 export const getPolicyLobs = (): Promise<PolicyLobDto[]> => LobModel.find();
 export const getPolicyLobById = (LobId: string): Promise<PolicyLobDto | any> => LobModel.findOne({ _id: LobId });
+export const getPolicyLobByCategoryName = (CategoryName: string): Promise<PolicyLobDto | any> => LobModel.findOne({ categoryName: CategoryName });
 export const deletePolicyLobById = (LobId: string): any => LobModel.findOneAndDelete({ _id: LobId });
 
 export const createSinglePolicyLob = async (payload: CreatePolicyLobDto): Promise<any> => {
@@ -64,7 +65,7 @@ export const createMultiplePolicyLobies = async (payloads: CreatePolicyLobDto[])
            // Prepare bulk operations for the current batch
            const bulkOps = batch.map(payload => ({
             updateOne: {
-                filter: { _id: payload._id },
+                filter: { categoryName: payload.categoryName },
                 update: { $set: payload },
                 upsert: true
             }

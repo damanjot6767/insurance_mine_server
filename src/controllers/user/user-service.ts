@@ -1,4 +1,4 @@
-import { createMultipleUsers, createSingleUser, deleteUserById, getUserById, getUsers, updateSingleUser } from "../../models/user-model";
+import { createMultipleUsers, createSingleUser, deleteUserById, getUserByEmail, getUserById, getUsers, updateSingleUser } from "../../models/user-model";
 import { ApiError } from "../../utils/api-error";
 import { CreateUserDto, UserDto } from "./dto";
 
@@ -42,6 +42,12 @@ export const getUserByIdService = async (userId: string): Promise<UserDto> => {
 
     const res = await getUserById(userId)
     if(!res) throw new ApiError(400, "not found")
+    return res
+}
+
+export const getUserByEmailService = async (Email: string): Promise<UserDto | undefined> => {
+
+    const res = await getUserByEmail(Email)
     return res
 }
 

@@ -66,6 +66,7 @@ export const UserModel = mongoose.model('User', userSchema);
 
 export const getUsers = (): Promise<UserDto[]> => UserModel.find();
 export const getUserById = (userId: string): Promise<UserDto | any> => UserModel.findOne({ _id: userId });
+export const getUserByEmail = (email: string): Promise<UserDto | any> => UserModel.findOne({ email: email });
 export const deleteUserById = (userId: string): any => UserModel.findOneAndDelete({ _id: userId });
 
 export const createSingleUser = async (payload: CreateUserDto): Promise<any> => {
@@ -108,7 +109,7 @@ export const createMultipleUsers = async (payloads: CreateUserDto[]): Promise<nu
            // Prepare bulk operations for the current batch
            const bulkOps = batch.map(payload => ({
             updateOne: {
-                filter: { _id: payload._id },
+                filter: { email: payload.email },
                 update: { $set: payload },
                 upsert: true
             }

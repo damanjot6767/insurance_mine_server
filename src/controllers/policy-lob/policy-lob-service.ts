@@ -1,4 +1,4 @@
-import { createMultiplePolicyLobies, createSinglePolicyLob, deletePolicyLobById, getPolicyLobById, getPolicyLobs } from "../../models/policy-lob-model";
+import { createMultiplePolicyLobies, createSinglePolicyLob, deletePolicyLobById, getPolicyLobByCategoryName, getPolicyLobById, getPolicyLobs } from "../../models/policy-lob-model";
 import { ApiError } from "../../utils/api-error";
 import { CreatePolicyLobDto, PolicyLobDto } from "./dto";
 
@@ -42,6 +42,12 @@ export const getPolicyLobByIdService = async (PolicyLobId: string): Promise<Poli
 
     const res = await getPolicyLobById(PolicyLobId)
     if(!res) throw new ApiError(400, "not found")
+    return res
+}
+
+export const getPolicyLobByCategoryNameService = async (CategoryName: string): Promise<PolicyLobDto | undefined> => {
+
+    const res = await getPolicyLobByCategoryName(CategoryName)
     return res
 }
 

@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
-    "dev": "tsx ./src/index.ts",
+    "dev": "node -r esbuild-register ./src/index.ts",
     "start": "tsc && node ./dist/index.js",
     "compile": "tsc"
   },
@@ -29,6 +29,8 @@
     "@types/passport-google-oauth20": "^2.0.14",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.6",
+    "esbuild": "^0.23.0",
+    "esbuild-register": "^3.6.0",
     "nodemon": "^3.0.3",
     "ts-node": "^10.9.2",
     "tsc": "^2.0.4",

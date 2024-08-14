@@ -1,4 +1,4 @@
-import { createMultipleAgents, createSingleAgent, deleteAgentById, getAgentById, getAgents } from "../../models/agent-model";
+import { createMultipleAgents, createSingleAgent, deleteAgentById, getAgentByAgentName, getAgentById, getAgents } from "../../models/agent-model";
 import { ApiError } from "../../utils/api-error";
 import { CreateAgentDto, AgentDto } from "./dto";
 
@@ -43,6 +43,12 @@ export const getAgentByIdService = async (AgentId: string): Promise<AgentDto> =>
 
     const res = await getAgentById(AgentId)
     if(!res) throw new ApiError(400, "not found")
+    return res
+}
+
+export const getAgentByAgentNameService = async (AgentName: string): Promise<AgentDto | undefined> => {
+
+    const res = await getAgentByAgentName(AgentName)
     return res
 }
 

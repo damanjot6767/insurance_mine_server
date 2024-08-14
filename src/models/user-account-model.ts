@@ -22,6 +22,7 @@ export const UserAccountModel = mongoose.model('UserAccount', userAccountSchema)
 
 export const getUserAccounts = (): Promise<UserAccountDto[]> => UserAccountModel.find();
 export const getUserAccountById = (userAccountId: string): Promise<UserAccountDto | any> => UserAccountModel.findOne({ _id: userAccountId });
+export const getUserAccountByAccountName = (AccountName: string): Promise<UserAccountDto | any> => UserAccountModel.findOne({ accountName: AccountName });
 export const deleteUserAccountById = (userAccountId: string): any => UserAccountModel.findOneAndDelete({ _id: userAccountId });
 
 export const createSingleUserAccount = async (payload: CreateUserAccountDto): Promise<any> => {
@@ -63,7 +64,7 @@ export const createMultipleUserAccounts = async (payloads: CreateUserAccountDto[
            // Prepare bulk operations for the current batch
            const bulkOps = batch.map(payload => ({
             updateOne: {
-                filter: { _id: payload._id },
+                filter: { accountName: payload.accountName },
                 update: { $set: payload },
                 upsert: true
             }
