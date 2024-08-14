@@ -17,8 +17,26 @@ import { CreateUserAccountDto } from "../user-account/dto";
 import { CreatePolicyDto } from "./dto";
 import { createMultipleUsersService, getUserByEmailService } from "../user/user-service";
 import { createMultipleUserAccountsService, getUserAccountByAccountNameService } from "../user-account/user-account-service";
-import { createMultiplePoliciesService, getPolicyByPolicyNumberService } from "./policy-service";
+import { createMultiplePoliciesService, getPolicyByPolicyNumberService, getPolicyInfoWithAggregationByUserIdService } from "./policy-service";
 import { getPolicyCarrierByCompanyName } from "../../models/policy-carrier-model";
+
+export const getPolicyInfoWithAggregationByUserIdSearch = asyncHandler(async (req, res) => {
+    const { email } = req.query;
+
+    const user = await getUserByEmailService(email as string);
+
+    if (!user) {
+        return res.status(404).json(new ApiResponse(201, 'error', 'User not found'));
+    }
+
+    const policies = await getPolicyInfoWithAggregationByUserIdService(user._id);
+    if (policies.length === 0) {
+        return res.status(404).json(new ApiResponse(201, 'error', 'No policies found for this user'));
+    }
+
+    return res.status(200).json(new ApiResponse(200, policies, "Policies get sucessfully"));
+
+});
 
 export const createPolicyDataThroughtSheet = asyncHandler(async (req, res) => {
     if (!req.file?.path) {

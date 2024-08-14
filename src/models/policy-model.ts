@@ -105,3 +105,18 @@ export const createMultiplePolices = async (payloads: CreatePolicyDto[]): Promis
         throw new ApiError(500, "Something went wrong while creating policies in batch");
     }
 }
+
+export const getPolicyInfoWithAggregationByUserId = async (userId: string): Promise<PolicyDto[]> => {
+    try {
+        const policies = await PolicyModel.find({userId: userId})
+         .populate('policyCategoryId')
+         .populate('policyCompanyId')
+         .populate('userId')
+         .exec();
+
+         return policies;
+
+    } catch (error) {
+        throw new ApiError(500, "Something went wrong while find policy info by userId");
+    }
+}

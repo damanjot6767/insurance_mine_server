@@ -1,4 +1,4 @@
-import { createMultiplePolices, createSinglePolicy, deletePolicyById, getPolicyById, getPolicyByPolicyNumber, getPolicys, updateSinglePolicy } from "../../models/policy-model";
+import { createMultiplePolices, createSinglePolicy, deletePolicyById, getPolicyById, getPolicyByPolicyNumber, getPolicyInfoWithAggregationByUserId, getPolicys, updateSinglePolicy } from "../../models/policy-model";
 import { ApiError } from "../../utils/api-error";
 import { CreatePolicyDto, PolicyDto } from "./dto";
 
@@ -48,6 +48,12 @@ export const getPolicyByIdService = async (PolicyId: string): Promise<PolicyDto>
 export const getPolicyByPolicyNumberService = async (PolicyName: string): Promise<PolicyDto | undefined> => {
 
     const res = await getPolicyByPolicyNumber(PolicyName)
+    return res
+}
+
+export const getPolicyInfoWithAggregationByUserIdService = async (UserId: string): Promise<PolicyDto[]> => {
+
+    const res = await getPolicyInfoWithAggregationByUserId(UserId)
     return res
 }
 

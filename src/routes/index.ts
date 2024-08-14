@@ -8,13 +8,13 @@ const routes = [
 ]
 
 //-----------------------swagger setup
-if (process.env.NODE_ENV==="development") {
+// if (process.env.NODE_ENV==="development") {
     createJsonDoc();
 
     routes.forEach(route => {
         addNewRoute(route.joiSchemaForSwagger, route.path, route.method.toLowerCase(), route.auth);
     });
-}
+// }
 
 const allRouters = Router();
 

@@ -1,11 +1,6 @@
 import * as Joi from 'joi';
 import { asyncHandler } from '../../../utils/async-handler';
 import { ApiError } from '../../../utils/api-error';
-import { createAgnetJoiValidationSchema } from '../../agent/validation';
-import { createPolicyCarrierJoiValidationSchema } from '../../policy-carrier/validation';
-import { createPolicyLobJoiValidationSchema } from '../../policy-lob/validation';
-import { createUserJoiValidationSchema } from '../../user/validation';
-import { createUserAccountJoiValidationSchema } from '../../user-account/validation';
 
 const createPolicyJoiValidationSchema = Joi.object({
     policyNumber: Joi.number().required(),
