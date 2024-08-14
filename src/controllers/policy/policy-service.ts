@@ -1,7 +1,16 @@
-import { createSinglePolicy, deletePolicyById, getPolicyById, getPolicys, updateSinglePolicy } from "../../models/policy-model";
+import { createMultiplePolices, createSinglePolicy, deletePolicyById, getPolicyById, getPolicys, updateSinglePolicy } from "../../models/policy-model";
 import { ApiError } from "../../utils/api-error";
 import { CreatePolicyDto, PolicyDto } from "./dto";
 
+
+export const createMultiplePoliciesService = async (payload: CreatePolicyDto[]): Promise<number> => {
+    try {
+        const res = await createMultiplePolices(payload);
+        return res
+    } catch (error) {
+        throw error;
+    }
+}
 
 export const createSinglePolicyService = async (payload: CreatePolicyDto): Promise<PolicyDto> => {
     try {

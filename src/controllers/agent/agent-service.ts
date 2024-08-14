@@ -1,6 +1,16 @@
-import { createSingleAgent, deleteAgentById, getAgentById, getAgents } from "../../models/agent-model";
+import { createMultipleAgents, createSingleAgent, deleteAgentById, getAgentById, getAgents } from "../../models/agent-model";
 import { ApiError } from "../../utils/api-error";
 import { CreateAgentDto, AgentDto } from "./dto";
+
+
+export const createMultipleAgentsService = async (payload: CreateAgentDto[]): Promise<number> => {
+    try {
+        const res = await createMultipleAgents(payload);
+        return res
+    } catch (error) {
+        throw error;
+    }
+}
 
 
 export const createSingleAgentService = async (payload: CreateAgentDto): Promise<AgentDto> => {

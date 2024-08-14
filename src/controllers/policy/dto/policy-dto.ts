@@ -7,7 +7,7 @@ interface PolicyDto {
     policyStartDate: Date;
     policyEndDate: Date;
     policyCategoryId: string;
-    companyCollectionId: string;
+    policyCompanyId: string;
     userId: string;
     createdAt?: Date;
     updatedAt?: Date;

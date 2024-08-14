@@ -6,10 +6,10 @@ interface UserDto {
     lastName?: string;
     dob: Date;
     address: String;
-    phoneNumber: number;
+    phoneNumber: string;
     state: string;
     zipCode: string;
-    gender?: typeof UserGendersEnum;
+    gender?: typeof UserGendersEnum 
     userType: typeof UserRolesEnum;
     createdAt?: Date;
     updatedAt?: Date;

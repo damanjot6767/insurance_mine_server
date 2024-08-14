@@ -49,3 +49,36 @@ export const updateSinglePolicyCarrier= async (payload: CreatePolicyCarrierDto):
         throw new ApiError(500, "Something went wrong while updating the single Carrier");
     }
 }
+
+
+export const createMultiplePolicyCarriers = async (payloads: CreatePolicyCarrierDto[]): Promise<number> => {
+    try {
+
+        const batchSize = 1000;
+        let startIndex = 0;
+        let endIndex = 1000;
+       
+        while (startIndex < payloads.length) {
+            const batch = payloads.slice(startIndex, endIndex)
+            
+           // Prepare bulk operations for the current batch
+           const bulkOps = batch.map(payload => ({
+            updateOne: {
+                filter: { _id: payload._id },
+                update: { $set: payload },
+                upsert: true
+            }
+            }));
+
+            // Execute bulkWrite for the current batch
+            const batchResult = await CarrierModel.bulkWrite(bulkOps, { ordered: true });
+
+            startIndex = startIndex + batchSize;
+            endIndex = endIndex + batchSize;
+        }
+
+        return payloads.length;
+    } catch (error) {
+        throw new ApiError(500, "Something went wrong while creating policy carriers in batch");
+    }
+}

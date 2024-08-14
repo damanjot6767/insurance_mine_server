@@ -28,21 +28,18 @@ export const userSchema = new Schema(
         },
         address: {
             type: String,
-            required: true
         },
         phoneNumber: {
-            type: Number,
+            type: String,
             required: true,
             minlength: 10,
             maxlength: 10,
         },
         state: {
-            type: String,
-            required: true
+            type: String
         },
         zipCode: {
             type: String,
-            required: true,
         },
         gender: {
             type: String,
@@ -94,5 +91,38 @@ export const updateSingleUser = async (payload: CreateUserDto): Promise<any> => 
         return res;
     } catch (error) {
         throw new ApiError(500, "Something went wrong while updating the single user");
+    }
+}
+
+
+export const createMultipleUsers = async (payloads: CreateUserDto[]): Promise<number> => {
+    try {
+
+        const batchSize = 1000;
+        let startIndex = 0;
+        let endIndex = 1000;
+       
+        while (startIndex < payloads.length) {
+            const batch = payloads.slice(startIndex, endIndex)
+            
+           // Prepare bulk operations for the current batch
+           const bulkOps = batch.map(payload => ({
+            updateOne: {
+                filter: { _id: payload._id },
+                update: { $set: payload },
+                upsert: true
+            }
+            }));
+
+            // Execute bulkWrite for the current batch
+            const batchResult = await UserModel.bulkWrite(bulkOps, { ordered: true });
+
+            startIndex = startIndex + batchSize;
+            endIndex = endIndex + batchSize;
+        }
+
+        return payloads.length;
+    } catch (error) {
+        throw new ApiError(500, "Something went wrong while creating users in batch");
     }
 }

@@ -1,7 +1,16 @@
-import { createSingleUserAccount, deleteUserAccountById, getUserAccountById, getUserAccounts } from "../../models/user-account-model";
+import { createMultipleUserAccounts, createSingleUserAccount, deleteUserAccountById, getUserAccountById, getUserAccounts } from "../../models/user-account-model";
 import { ApiError } from "../../utils/api-error";
 import { CreateUserAccountDto, UserAccountDto } from "./dto";
 
+
+export const createMultipleUserAccountsService = async (payload: CreateUserAccountDto[]): Promise<number> => {
+    try {
+        const res = await createMultipleUserAccounts(payload);
+        return res
+    } catch (error) {
+        throw error;
+    }
+}
 
 export const createSingleUserAccountService = async (payload: CreateUserAccountDto): Promise<UserAccountDto> => {
     try {

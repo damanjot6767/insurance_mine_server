@@ -30,25 +30,6 @@ const importPolicyDataUsingSheetValidationSchema = Joi.object({
     file: Joi.any().meta({ swaggerType: 'file' }).required().description('xlsx , csv file')
 })
 
-const ImportPolicyDataUsingSheetJoiValidation = (payload: any) => {
-
-    try {
-        const mergeJoiValidation = Joi.object({
-            ...createPolicyJoiValidationSchema,
-            ...createAgnetJoiValidationSchema,
-            ...createPolicyCarrierJoiValidationSchema,
-            ...createPolicyLobJoiValidationSchema,
-            ...createUserJoiValidationSchema,
-            ...createUserAccountJoiValidationSchema
-        })
-        const { error, value } = mergeJoiValidation.validate(payload);
-        if (error) {
-            throw new ApiError(400, error.message)
-        }
-    } catch (error: any) {
-        throw new ApiError(400, error.message || "joi validation error")
-    }
-}
 
 
-export { CreatePolicyJoiValidation, createPolicyJoiValidationSchema, ImportPolicyDataUsingSheetJoiValidation, importPolicyDataUsingSheetValidationSchema }
+export { CreatePolicyJoiValidation, createPolicyJoiValidationSchema, importPolicyDataUsingSheetValidationSchema }

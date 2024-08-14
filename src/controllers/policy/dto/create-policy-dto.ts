@@ -1,11 +1,11 @@
 
 interface CreatePolicyDto  {
     _id: string;
-    policyNumber: number;
+    policyNumber: string;
     policyStartDate: Date;
     policyEndDate: Date;
     policyCategoryId: string;
-    companyCollectionId: string;
+    policyCompanyId: string;
     userId: string;
 }
 

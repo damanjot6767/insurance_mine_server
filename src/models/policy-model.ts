@@ -24,7 +24,7 @@ export const policySchema = new Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'LOB'
         },
-        companyCollectionId: {
+        policyCompanyId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Carrier'
         },
@@ -73,3 +73,34 @@ export const updateSinglePolicy = async (payload: CreatePolicyDto): Promise<any>
     }
 }
 
+export const createMultiplePolices = async (payloads: CreatePolicyDto[]): Promise<number> => {
+    try {
+
+        const batchSize = 1000;
+        let startIndex = 0;
+        let endIndex = 1000;
+       
+        while (startIndex < payloads.length) {
+            const batch = payloads.slice(startIndex, endIndex)
+            
+           // Prepare bulk operations for the current batch
+           const bulkOps = batch.map(payload => ({
+            updateOne: {
+                filter: { _id: payload._id },
+                update: { $set: payload },
+                upsert: true
+            }
+            }));
+
+            // Execute bulkWrite for the current batch
+            await PolicyModel.bulkWrite(bulkOps, { ordered: true });
+
+            startIndex = startIndex + batchSize;
+            endIndex = endIndex + batchSize;
+        }
+
+        return payloads.length;
+    } catch (error) {
+        throw new ApiError(500, "Something went wrong while creating policies in batch");
+    }
+}

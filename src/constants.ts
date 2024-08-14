@@ -1,16 +1,16 @@
-export const DB_NAME: string = 'Insurance'
+export const DB_NAME: string = 'insurance'
 
 
 export const UserRolesEnum = {
-  ACTIVE_CLIENT: "ACTIVE CLIENT",
-  INACTIVE_CLIENT: "INACTIVE CLIENT",
+  ACTIVE_CLIENT: "Active Client",
+  INACTIVE_CLIENT: "InActive Client",
 };
 
 export const AvailableUserRoles: string[] = Object.values(UserRolesEnum);
 
 export const UserGendersEnum = {
-  MALE: "MALE",
-  FEMALE: "FEMALE"
+  MALE: "Male",
+  FEMALE: "Female"
 }
 
 export const AvailableGenders: string[] = Object.values(UserGendersEnum)

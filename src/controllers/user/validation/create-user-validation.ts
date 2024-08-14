@@ -1,4 +1,4 @@
-import * as Joi from 'joi';
+import  Joi from 'joi';
 import { asyncHandler } from '../../../utils/async-handler';
 import { ApiError } from '../../../utils/api-error';
 import { AvailableGenders, AvailableUserRoles } from '../../../constants';

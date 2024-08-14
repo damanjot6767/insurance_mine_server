@@ -1,6 +1,16 @@
-import { createSinglePolicyCarrier, deletePolicyCarrierById, getPolicyCarrierById, getPolicyCarriers } from "../../models/policy-carrier-model";
+import { createMultiplePolicyCarriers, createSinglePolicyCarrier, deletePolicyCarrierById, getPolicyCarrierById, getPolicyCarriers } from "../../models/policy-carrier-model";
 import { ApiError } from "../../utils/api-error";
 import { CreatePolicyCarrierDto, PolicyCarrierDto } from "./dto";
+
+
+export const createMultiplePolicyCarriersService = async (payload: CreatePolicyCarrierDto[]): Promise<number> => {
+    try {
+        const res = await createMultiplePolicyCarriers(payload);
+        return res
+    } catch (error) {
+        throw error;
+    }
+}
 
 
 export const createSinglePolicyCarrierService = async (payload: CreatePolicyCarrierDto): Promise<PolicyCarrierDto> => {

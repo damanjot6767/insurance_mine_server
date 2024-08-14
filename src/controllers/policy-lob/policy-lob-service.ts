@@ -1,44 +1,53 @@
-import { createSinglePolicyCarrier, deletePolicyCarrierById, getPolicyCarrierById, getPolicyCarriers } from "../../models/policy-carrier-model";
+import { createMultiplePolicyLobies, createSinglePolicyLob, deletePolicyLobById, getPolicyLobById, getPolicyLobs } from "../../models/policy-lob-model";
 import { ApiError } from "../../utils/api-error";
-import { CreatePolicyCarrierDto, PolicyCarrierDto } from "./dto";
+import { CreatePolicyLobDto, PolicyLobDto } from "./dto";
 
 
-export const createSinglePolicyCarrierService = async (payload: CreatePolicyCarrierDto): Promise<PolicyCarrierDto> => {
+export const createMultiplePolicyLobiesService = async (payload: CreatePolicyLobDto[]): Promise<number> => {
     try {
-        const res = await createSinglePolicyCarrier(payload);
+        const res = await createMultiplePolicyLobies(payload);
         return res
     } catch (error) {
         throw error;
     }
 }
 
-export const updateSinglePolicyCarrierService = async (payload: CreatePolicyCarrierDto): Promise<PolicyCarrierDto> => {
+export const createSinglePolicyLobService = async (payload: CreatePolicyLobDto): Promise<PolicyLobDto> => {
     try {
-        await getPolicyCarrierByIdService(payload._id);
-
-        const res = await updateSinglePolicyCarrierService(payload);
+        const res = await createSinglePolicyLob(payload);
         return res
     } catch (error) {
         throw error;
     }
 }
 
-export const getPolicyCarriersService = async (): Promise<PolicyCarrierDto[]> => {
+export const updateSinglePolicyLobService = async (payload: CreatePolicyLobDto): Promise<PolicyLobDto> => {
+    try {
+        await getPolicyLobByIdService(payload._id);
 
-    const res = await getPolicyCarriers()
+        const res = await updateSinglePolicyLobService(payload);
+        return res
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const getPolicyLobsService = async (): Promise<PolicyLobDto[]> => {
+
+    const res = await getPolicyLobs()
     return res
 }
 
-export const getPolicyCarrierByIdService = async (PolicyCarrierId: string): Promise<PolicyCarrierDto> => {
+export const getPolicyLobByIdService = async (PolicyLobId: string): Promise<PolicyLobDto> => {
 
-    const res = await getPolicyCarrierById(PolicyCarrierId)
+    const res = await getPolicyLobById(PolicyLobId)
     if(!res) throw new ApiError(400, "not found")
     return res
 }
 
-export const deletePolicyCarrierByIdService = async (PolicyCarrierId: string): Promise<any> => {
+export const deletePolicyLobByIdService = async (PolicyLobId: string): Promise<any> => {
 
-    const res = await deletePolicyCarrierById(PolicyCarrierId)
+    const res = await deletePolicyLobById(PolicyLobId)
     if(!res) throw new ApiError(400, "not found")
     return res
 }

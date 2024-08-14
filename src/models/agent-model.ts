@@ -49,3 +49,36 @@ export const updateSingleAgent= async (payload: CreateAgentDto): Promise<any> =>
         throw new ApiError(500, "Something went wrong while updating the single agent");
     }
 }
+
+
+export const createMultipleAgents = async (payloads: CreateAgentDto[]): Promise<number> => {
+    try {
+
+        // const batchSize = 1;
+        // let startIndex = 0;
+        // let endIndex = 1;
+       
+        // while (startIndex < payloads.length) {
+        //     const batch = payloads.slice(startIndex, endIndex)
+            
+        //    // Prepare bulk operations for the current batch
+        //    const bulkOps = batch.map(payload => ({
+        //     updateOne: {
+        //         filter: { _id: payload._id },
+        //         update: { $set: payload },
+        //         upsert: true
+        //     }
+        //     }));
+
+        //     // Execute bulkWrite for the current batch
+        //     await AgentModel.bulkWrite(bulkOps, { ordered: true });
+
+        //     startIndex = startIndex + batchSize;
+        //     endIndex = endIndex + batchSize;
+        // }
+        await createSingleAgent(payloads[0])
+        return payloads.length;
+    } catch (error) {
+        throw new ApiError(500, "Something went wrong while creating agents in batch");
+    }
+}
