@@ -17,8 +17,27 @@ import { CreateUserAccountDto } from "../user-account/dto";
 import { CreatePolicyDto } from "./dto";
 import { createMultipleUsersService, getUserByEmailService } from "../user/user-service";
 import { createMultipleUserAccountsService, getUserAccountByAccountNameService } from "../user-account/user-account-service";
-import { createMultiplePoliciesService, getPolicyByPolicyNumberService, getPolicyInfoWithAggregationByUserIdService } from "./policy-service";
+import { createMultiplePoliciesService, getPoliciesAggregationForEachUserService, getPolicyByPolicyNumberService, getPolicyInfoWithAggregationByUserIdService } from "./policy-service";
 import { getPolicyCarrierByCompanyName } from "../../models/policy-carrier-model";
+
+export const getPoliciesAggregationForEachUser = asyncHandler(async (req, res) => {
+    const page = req?.query?.page?+req.query.page : 0 ;
+    const limit = req?.query?.limit?+req.query.limit : 10;
+
+    const policies = await getPoliciesAggregationForEachUserService(page, limit);
+    if (policies.length === 0) {
+        return res.status(404).json(new ApiResponse(201, 'error', 'No policies found'));
+    }
+
+    const data = {
+        limit: limit,
+        page: page,
+        list: policies
+    }
+
+    return res.status(200).json(new ApiResponse(200, data, "Policies get sucessfully"));
+
+});
 
 export const getPolicyInfoWithAggregationByUserIdSearch = asyncHandler(async (req, res) => {
     const { email } = req.query;

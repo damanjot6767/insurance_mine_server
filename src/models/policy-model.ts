@@ -120,3 +120,49 @@ export const getPolicyInfoWithAggregationByUserId = async (userId: string): Prom
         throw new ApiError(500, "Something went wrong while find policy info by userId");
     }
 }
+
+export const getPoliciesAggregationForEachUser = async (page: number, limit: number): Promise<PolicyDto[]> => {
+    try {
+        const aggregatedPolicies = await PolicyModel.aggregate([
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'userId',
+                    foreignField: '_id',
+                    as: 'userInfo'
+                }
+            },
+            {
+                $unwind: '$userInfo'
+            },
+            {
+                $group: {
+                    _id: '$userId',
+                    userInfo: { $first: '$userInfo' },
+                    policies: {
+                        $push: {
+                            policyNumber: '$policyNumber',
+                            policyStartDate: '$policyStartDate',
+                            policyEndDate: '$policyEndDate',
+                            policyCategoryId: '$policyCategoryId',
+                            policyCompanyId: '$policyCompanyId',
+                            createdAt:  '$createdAt',
+                            updatedAt: '$updatedAt'
+                        }
+                    }
+                }
+            },
+            {
+                $skip: (page-1) * limit
+            },
+            {
+                $limit: limit
+            }
+        ]);
+
+         return aggregatedPolicies;
+
+    } catch (error) {
+        throw new ApiError(500, "Something went wrong while find policies info for each user");
+    }
+}

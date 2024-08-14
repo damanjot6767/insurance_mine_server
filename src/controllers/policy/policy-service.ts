@@ -1,4 +1,4 @@
-import { createMultiplePolices, createSinglePolicy, deletePolicyById, getPolicyById, getPolicyByPolicyNumber, getPolicyInfoWithAggregationByUserId, getPolicys, updateSinglePolicy } from "../../models/policy-model";
+import { createMultiplePolices, createSinglePolicy, deletePolicyById, getPoliciesAggregationForEachUser, getPolicyById, getPolicyByPolicyNumber, getPolicyInfoWithAggregationByUserId, getPolicys, updateSinglePolicy } from "../../models/policy-model";
 import { ApiError } from "../../utils/api-error";
 import { CreatePolicyDto, PolicyDto } from "./dto";
 
@@ -41,7 +41,7 @@ export const getPolicysService = async (): Promise<PolicyDto[]> => {
 export const getPolicyByIdService = async (PolicyId: string): Promise<PolicyDto> => {
 
     const res = await getPolicyById(PolicyId)
-    if(!res) throw new ApiError(400, "not found")
+    if (!res) throw new ApiError(400, "not found")
     return res
 }
 
@@ -57,10 +57,16 @@ export const getPolicyInfoWithAggregationByUserIdService = async (UserId: string
     return res
 }
 
+export const getPoliciesAggregationForEachUserService = async (page: number, limit: number): Promise<PolicyDto[]> => {
+
+    const res = await getPoliciesAggregationForEachUser(page, limit)
+    return res
+}
+
 export const deletePolicyByIdService = async (PolicyId: string): Promise<any> => {
 
     const res = await deletePolicyById(PolicyId)
-    if(!res) throw new ApiError(400, "not found")
+    if (!res) throw new ApiError(400, "not found")
     return res
 }
 

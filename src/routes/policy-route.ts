@@ -1,5 +1,6 @@
-import { createPolicyDataThroughtSheet, getPolicyInfoWithAggregationByUserIdSearch } from "../controllers/policy/policy-controller";
-import { GetPolicyByUserEmailJoiValidation, getPolicyByUserEmailJoiValidationSchema, importPolicyDataUsingSheetValidationSchema } from "../controllers/policy/validation";
+import { query } from "express";
+import { createPolicyDataThroughtSheet, getPoliciesAggregationForEachUser, getPolicyInfoWithAggregationByUserIdSearch } from "../controllers/policy/policy-controller";
+import { GetPoliciesWithPaginationJoiValidation, GetPolicyByUserEmailJoiValidation, getPoliciesWithPaginationJoiValidationSchema, getPolicyByUserEmailJoiValidationSchema, importPolicyDataUsingSheetValidationSchema } from "../controllers/policy/validation";
 import { multerUpload } from "../utils/multer";
 
 //for now all apis publically open
@@ -29,6 +30,19 @@ const routes = [
 		middlewares: [GetPolicyByUserEmailJoiValidation ],
 		auth: false,
 		handler: getPolicyInfoWithAggregationByUserIdSearch
+	},
+	{
+		method: 'get',
+		path: '/v1/policy/aggregate',
+		joiSchemaForSwagger: {
+			group: 'Policy',
+			description: `Route to get aggregated policy for each user`,
+			model: 'Policy',
+			query: getPoliciesWithPaginationJoiValidationSchema
+		},
+		middlewares: [ GetPoliciesWithPaginationJoiValidation ],
+		auth: false,
+		handler: getPoliciesAggregationForEachUser
 	}
 ]
 
