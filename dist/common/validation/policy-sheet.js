@@ -9,7 +9,7 @@ const constants_1 = require("../../constants");
 // Define your available genders and user roles
 const policySheetValidationSchema = joi_1.default.object({
     //---------------------------------------------------Policy
-    policy_number1: joi_1.default.string().required(),
+    policy_number: joi_1.default.string().required(),
     policy_start_date: joi_1.default.date().required(),
     policy_end_date: joi_1.default.date().optional(), // Corrected typo
     //---------------------------------------------------Agent
