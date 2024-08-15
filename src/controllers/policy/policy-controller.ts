@@ -19,6 +19,7 @@ import { createMultipleUsersService, getUserByEmailService } from "../user/user-
 import { createMultipleUserAccountsService, getUserAccountByAccountNameService } from "../user-account/user-account-service";
 import { createMultiplePoliciesService, getPoliciesAggregationForEachUserService, getPolicyByPolicyNumberService, getPolicyInfoWithAggregationByUserIdService } from "./policy-service";
 import { getPolicyCarrierByCompanyName } from "../../models/policy-carrier-model";
+import { removeFile } from "../../utils/fs-service";
 
 export const getPoliciesAggregationForEachUser = asyncHandler(async (req, res) => {
     const page = req?.query?.page?+req.query.page : 0 ;
@@ -75,22 +76,25 @@ export const createPolicyDataThroughtSheet = asyncHandler(async (req, res) => {
         if (!responseSent) {
             responseSent = true;
             await Main(message.data)
+            await removeFile(filePath)
             return res.status(201).json(new ApiResponse(201, 'success', 'Data created successfully'));
         }
     });
 
-    worker.on('error', (error) => {
+    worker.on('error', async(error) => {
         if (!responseSent) {
             responseSent = true;
             console.error('Worker error:', error);
+            await removeFile(filePath)
             return res.status(500).json(new ApiResponse(500, 'Something went wrong', 'Data creation failed'));
         }
     });
 
-    worker.on('exit', (code) => {
+    worker.on('exit', async(code) => {
         if (code !== 0 && !responseSent) {
             responseSent = true;
             console.error(`Worker stopped with exit code ${code}`);
+            await removeFile(filePath)
             return res.status(500).json(new ApiResponse(500, 'Worker stopped with an error', 'Data creation failed'));
         }
     });
