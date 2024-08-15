@@ -65,7 +65,7 @@ export const createPolicyDataThroughtSheet = asyncHandler(async (req, res) => {
     const filePath = req.file.path;
     const fileType = path.extname(req.file.originalname).toLowerCase();
 
-    const worker = new Worker(path.resolve(__dirname, './policy-worker.ts'), {
+    const worker = new Worker(path.resolve(__dirname, './policy-worker'), {
         workerData: { filePath, fileType },
     });
 
