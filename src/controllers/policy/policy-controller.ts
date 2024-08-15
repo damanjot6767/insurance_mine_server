@@ -19,7 +19,6 @@ import { createMultipleUsersService, getUserByEmailService } from "../user/user-
 import { createMultipleUserAccountsService, getUserAccountByAccountNameService } from "../user-account/user-account-service";
 import { createMultiplePoliciesService, getPoliciesAggregationForEachUserService, getPolicyByPolicyNumberService, getPolicyInfoWithAggregationByUserIdService } from "./policy-service";
 import { getPolicyCarrierByCompanyName } from "../../models/policy-carrier-model";
-import { removeFile } from "../../utils/fs-service";
 
 export const getPoliciesAggregationForEachUser = asyncHandler(async (req, res) => {
     const page = req?.query?.page?+req.query.page : 0 ;
@@ -66,7 +65,7 @@ export const createPolicyDataThroughtSheet = asyncHandler(async (req, res) => {
     const filePath = req.file.path;
     const fileType = path.extname(req.file.originalname).toLowerCase();
 
-    const worker = new Worker(path.resolve(__dirname, './policy-worker'), {
+    const worker = new Worker(path.resolve(__dirname, './policy-worker.ts'), {
         workerData: { filePath, fileType },
     });
 
@@ -75,26 +74,26 @@ export const createPolicyDataThroughtSheet = asyncHandler(async (req, res) => {
     worker.on('message', async (message) => {
         if (!responseSent) {
             responseSent = true;
+            if(message.status==="error"){
+                return res.status(500).json(new ApiResponse(500,"error",message?.message || "something went wrong!" ));
+            }
             await Main(message.data)
-            await removeFile(filePath)
             return res.status(201).json(new ApiResponse(201, 'success', 'Data created successfully'));
         }
     });
 
-    worker.on('error', async(error) => {
+    worker.on('error', (error) => {
         if (!responseSent) {
             responseSent = true;
             console.error('Worker error:', error);
-            await removeFile(filePath)
             return res.status(500).json(new ApiResponse(500, 'Something went wrong', 'Data creation failed'));
         }
     });
 
-    worker.on('exit', async(code) => {
+    worker.on('exit', (code) => {
         if (code !== 0 && !responseSent) {
             responseSent = true;
             console.error(`Worker stopped with exit code ${code}`);
-            await removeFile(filePath)
             return res.status(500).json(new ApiResponse(500, 'Worker stopped with an error', 'Data creation failed'));
         }
     });
@@ -109,7 +108,7 @@ const Main = async (payloads: PolicySheetDataDto[]) => {
         let newUserAccounts: { [key: string]: CreateUserAccountDto } = {}
         let newPolicies: { [key: string]: CreatePolicyDto } = {}
 
-        const promises = payloads.map(async (item) => {
+        const promises = payloads?.map(async (item) => {
             //--------------------------------------------Agent Payload
             if (!newAgents[item.agent]) {
                 const isAgentExist = await getAgentByAgentNameService(item.agent);

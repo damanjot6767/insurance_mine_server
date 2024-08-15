@@ -4,9 +4,10 @@ import xlsx from "xlsx";
 import { parse } from "csv-parse";
 import { PolicySheetJoiValidation } from "../../common/validation/policy-sheet";
 import { PolicySheetDataDto } from "../../common/dto/policy-dto";
+import { removeFile } from "../../utils/fs-service";
 
 
-const processXlsx = (filePath: string) => {
+const processXlsx = async (filePath: string) => {
     try {
         const workbook = xlsx.readFile(filePath);
 
@@ -36,7 +37,7 @@ const processXlsx = (filePath: string) => {
         parentPort?.postMessage({ status: "success", message: "Data successfully imported", data: jsonData });
 
     } catch (error) {
-
+        await removeFile(filePath)
         console.error('Error processing XLSX file:', (error as Error).message);
         parentPort?.postMessage({ status: "error", message: (error as Error).message });
     }
@@ -52,18 +53,24 @@ const processCsv = (filePath: string) => {
 
             const { error } = PolicySheetJoiValidation(row);
             if (error) {
-                readStream.destroy(new Error(error.message));
+                readStream.emit('error', new Error(error.message));
+                return;
             }
             csvData.push(row);
         })
         .on('end', async () => {
             try {
+                if (!csvData.length) {
+                    parentPort?.postMessage({ status: "error", message: "Data not found"});
+                }
                 parentPort?.postMessage({ status: "success", message: "Data successfully imported", data: csvData });
             } catch (err: any) {
+                await removeFile(filePath)
                 parentPort?.postMessage({ status: "error", message: err?.message });
             }
         })
-        .on('error', (err) => {
+        .on('error', async (err) => {
+            await removeFile(filePath)
             parentPort?.postMessage({ status: "error", message: err.message });
         });
 };

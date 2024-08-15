@@ -5,7 +5,7 @@ import { AvailableGenders, AvailableUserRoles } from '../../constants';
 
 const policySheetValidationSchema = Joi.object({
     //---------------------------------------------------Policy
-    policy_number1: Joi.string().required(),
+    policy_number: Joi.string().required(),
     policy_start_date: Joi.date().required(),
     policy_end_date: Joi.date().optional(), // Corrected typo
 
