@@ -5,10 +5,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.allRouters = void 0;
 const policy_route_1 = __importDefault(require("./policy-route"));
+const message_route_1 = __importDefault(require("./message-route"));
 const swagger_util_1 = require("../utils/swagger-util");
 const express_1 = require("express");
 const routes = [
-    ...policy_route_1.default
+    ...policy_route_1.default,
+    ...message_route_1.default
 ];
 //-----------------------swagger setup
 // if (process.env.NODE_ENV==="development") {

@@ -1,10 +1,12 @@
 
 import policyRouter from './policy-route'
+import messageRouter from './message-route'
 import { addNewRoute, createJsonDoc } from '../utils/swagger-util';
 import { Router } from 'express';
 
 const routes = [
-    ...policyRouter
+    ...policyRouter,
+    ...messageRouter
 ]
 
 //-----------------------swagger setup
